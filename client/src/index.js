@@ -1,17 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import App from './components/App';
+import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
+import { PokeContextProvider } from './components/PokeContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <Auth0Provider
+    domain="dev-idkiwmz2fj2qemqs.us.auth0.com"
+    clientId="qWImDjVQ5f05i0GDh2c4OpJhWcWoBfxX"
+    redirectUri={window.location.origin}
+    onRedirectCallback={(appState) => {
+      // Handle the redirect after authentication (if needed)
+    }}>
+      <PokeContextProvider>
+        <App />
+      </PokeContextProvider>
+    </Auth0Provider>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+
