@@ -19,7 +19,7 @@ const handleCreateUser = async (userData) => {
 const myReducer = (state, action) => {
   switch (action.type) {
     case "ASSIGN_USER":
-        handleCreateUser(action.payload);
+        // handleCreateUser(action.payload);
         return {
           // assign user
           ...state,

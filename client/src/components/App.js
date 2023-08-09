@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import styled from "styled-components";
 import PokeNavBar from "./PokeNavBar";
 import PokeSignin from "./PokeSignin";
-import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 
 function App() {
   return (

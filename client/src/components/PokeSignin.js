@@ -9,10 +9,11 @@ import { useNavigate } from "react-router-dom";
 
 const PokeSignin = () => {
 const { loginWithRedirect, loginWithPopup, user, isAuthenticated, logout } = useAuth0();
-const { dispatch, state} = useContext(PokeContext);
+const { dispatch, state } = useContext(PokeContext);
 const [isAnonymUser, setAnonymUser] = useState(true);
 const navigate = useNavigate();
 // const history = useHistory();
+
 // const { logout } = useAuth0();
 // useEffect(() => {
 //   const logoutAndRedirect = async () => {
@@ -36,24 +37,51 @@ useEffect( () => {
   : console.log("error");
 
   if (user) {
-    dispatch({type: "ASSIGN_USER", payload: user});
-    setAnonymUser(false);
+    fetch("/create-get-user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user), // Replace with the user data you want to send
+    })
+      .then(res => {
+        // if (!res.ok) {
+        //   throw new Error('Network response was not ok');
+        // }
+        return res.json(); // Parse the JSON data 
+      })
+      .then(data => {
+        // Work with the parsed data
+        dispatch({type: "ASSIGN_USER", payload: data.data});
+        setAnonymUser(false);
+        console.log("data",data);
+      })
+      .catch(error => {
+        // Handle any errors that occurred during the fetch or processing
+        console.error('Fetch error:', error);
+      });
+    
   }
   state && console.log("EFFECTstate", state.user);
   localStorage.setItem("savedUser", JSON.stringify(state.user));
 
-  if (state.user.nickname) {
+}, [user]);
+
+useEffect( () => {
+  state.user && console.log("state", state.user);
+  state.user && console.log("statee", state.user.pokeId);
+  state.user && console.log("stateeee", state.user.nickname);
+  if (state.user.nickname && !isAnonymUser) {
     console.log("timer is running");
     const timerId = setTimeout(() => {
-      navigate(`/user/${state.user.nickname}`);
-    }, 2000); // Change the delay time as needed (in milliseconds)
+      navigate(`/user/${state.user.nickname}${state.user.pokeId}`);
+    }, 5000); // Change the delay time as needed (in milliseconds)
     // Clean up the timer when the component unmounts or aUser changes
     return () => clearTimeout(timerId);
   }
-}, [user, isAnonymUser]);
+}, [ isAnonymUser]);
 
-state.user && console.log("statee", state.user);
-state.user && console.log("stateeee", state.user.nickname);
+
 
   // const handleSignIn = () => {
   //   // loginWithRedirect(); // Redirect to Auth0 login page for authentication
