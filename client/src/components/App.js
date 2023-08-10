@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import styled from "styled-components";
 import PokeNavBar from "./PokeNavBar";
 import PokeSignin from "./PokeSignin";
+import PokeHome from "./PokeHome";
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
         {/* <PokeSideBar /> */}
         <Routes>
           <Route path="/" element={<PokeSignin />} />
-          {/* <Route path="/:user" element={<PokeHome />} /> */}
+          <Route path="/user/:nick/:pokeId" element={<PokeHome />} />
           {/* <Route path="/error" element={<PokError />} /> */}
         </Routes>
         {/* <PokeFooter/> */}

@@ -28,9 +28,18 @@ const navigate = useNavigate();
 // }, [loginWithRedirect]);
 
 // Redirect the user to another route after initiating the login flow
-// useEffect(() => {
-//   history.push('/'); // Replace with the desired route
-// }, [history]);
+useEffect(() => {
+  // history.push('/'); // Replace with the desired route
+  console.log("savedUser?", state.user);
+  let storedTempUser =JSON.parse(localStorage.getItem("savedUser"));
+  console.log("storedUser?", storedTempUser);
+  if (!state.user) {
+    state.user = JSON.parse(localStorage.getItem("savedUser")) ;
+    console.log("savedUser gotten from browser", state.user.nickname);
+  }
+  state.user.nickname && navigate(`/user/${state.user.nickname}/${state.user.pokeId}`);
+}, []);
+
 useEffect( () => {
   (isAuthenticated && user) 
   ? console.log("user", user, user.email) 
@@ -60,21 +69,20 @@ useEffect( () => {
         // Handle any errors that occurred during the fetch or processing
         console.error('Fetch error:', error);
       });
-    
   }
   state && console.log("EFFECTstate", state.user);
-  localStorage.setItem("savedUser", JSON.stringify(state.user));
+  state && localStorage.setItem("savedUser", JSON.stringify(state.user));
 
 }, [user]);
 
 useEffect( () => {
-  state.user && console.log("state", state.user);
-  state.user && console.log("statee", state.user.pokeId);
-  state.user && console.log("stateeee", state.user.nickname);
+  state.user && console.log("state user", state.user);
+  state.user && console.log("state pokeId", state.user.pokeId);
+  state.user && console.log("state nickname", state.user.nickname);
   if (state.user.nickname && !isAnonymUser) {
     console.log("timer is running");
     const timerId = setTimeout(() => {
-      navigate(`/user/${state.user.nickname}${state.user.pokeId}`);
+      navigate(`/user/${state.user.nickname}/${state.user.pokeId}`);
     }, 5000); // Change the delay time as needed (in milliseconds)
     // Clean up the timer when the component unmounts or aUser changes
     return () => clearTimeout(timerId);

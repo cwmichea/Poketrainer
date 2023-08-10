@@ -16,6 +16,7 @@ const theme = {//just a first approach for colors, just to create and share this
       highlight: '#00ff00',//random shiny green
     },
     primaryFontFamily: 'Arial, sans-serif',
+    secondaryFontFamily: "'Press Start 2P', cursive",
   };
 
 const GlobalStyle = createGlobalStyle`
