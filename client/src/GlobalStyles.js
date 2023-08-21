@@ -17,6 +17,15 @@ const theme = {//just a first approach for colors, just to create and share this
     },
     primaryFontFamily: 'Arial, sans-serif',
     secondaryFontFamily: "'Press Start 2P', cursive",
+    pokeFontfamily: "'Kanit', sans-serif",
+    pokeFontfamily2: "'Teko', sans-serif",
+    pokeFontfamily3: "'Rock Salt', cursive",
+    pokeFontfamily4: "'La Belle Aurore', cursive",
+    pokeFontfamily5: "'Rock Salt', cursive",
+    pokeFontfamily6: "'Homemade Apple', cursive",
+    pokeFontfamily7: "'Gloria Hallelujah', cursive",
+    pokeFontfamily7: "'Zeyada', cursive",
+
   };
 
 const GlobalStyle = createGlobalStyle`

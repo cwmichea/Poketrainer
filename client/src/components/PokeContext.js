@@ -20,12 +20,35 @@ const myReducer = (state, action) => {
   switch (action.type) {
     case "ASSIGN_USER":
         // handleCreateUser(action.payload);
+        
         return {
           // assign user
           ...state,
           user: action.payload,
         };
-      
+    case "INIT_POKEGOALS":
+        console.log("2.5reducer console", state.user.pokeGoals);
+        console.log("2.5goalNum", action.goalNum);
+        let pokeName = action.pokemonName || 'y';
+        let pokeImg = action.pokemonImg || 'y';
+        let currentGoal = action.goalNum || "1";
+        return {
+          // init first goal
+          ...state,
+          user: {
+            ...state.user,
+            pokeGoals: {
+              ...state.user.pokeGoals,
+              // pokegoal1: {
+                [`pokegoal${currentGoal}`]: {
+                    ...state.user.pokeGoals.pokegoal1,
+                    pokemon: pokeName,
+                    pokeimg: pokeImg,
+                    pokelvl: 1,
+                    goalType: "y"}
+              },
+            }
+        };
     default:
       return state;
     }

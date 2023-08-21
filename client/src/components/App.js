@@ -3,19 +3,28 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import styled from "styled-components";
 import PokeNavBar from "./PokeNavBar";
 import PokeSignin from "./PokeSignin";
+import PokeSideBar from "./PokeSideBar";
 import PokeHome from "./PokeHome";
+import {  useContext } from "react";
+import { PokeContext } from "./PokeContext";
+// import { PokeProcess } from "./PokeProcess";
+// import PokeSteps from "./PokeSteps";
+import PokeSteps from "./PokeSteps";
 
 function App() {
+  const {   state } = useContext(PokeContext);
+
   return (
     <Router>
       <GlobalStyle />
       <PokeNavBar />
 
-      <Structurediv>
-        {/* <PokeSideBar /> */}
+      <Structurediv state={state.user.nickname}>
+        { state.user.sub && <PokeSideBar />}
         <Routes>
           <Route path="/" element={<PokeSignin />} />
           <Route path="/user/:nick/:pokeId" element={<PokeHome />} />
+          <Route path="/:pokeId/:pokemon" element={<PokeSteps />} />
           {/* <Route path="/error" element={<PokError />} /> */}
         </Routes>
         {/* <PokeFooter/> */}
@@ -26,15 +35,19 @@ function App() {
 
 const Structurediv = styled.div`
   display: flex;
-  flex-direction: column;
+  // flex-direction: column;
   margin: 0;
   font-family: ${theme.primaryFontFamily};
   color: ${theme.textColors.primary};
   background-color: ${theme.colors.primary};
-  width: 100%;
-  height: 100vh;
-  padding-top: 34px;
-  // justify-content: center;
-  align-items: center;
+  width: calc(100% - 30px);// 30px for padding
+  min-height: calc(100vh - 40px);
+  // height: 100vh;
+  padding: 34px 10px 0px;
+  border: 5px solid black;
+  // justify-content: ${props => props.state} ? center : space-around};
+  justify-content:${props => (props.state ? 'space-between' : 'center' )};
+  // align-items: center;
+  max-height: auto;
 `;
 export default App;

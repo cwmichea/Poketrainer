@@ -10,6 +10,10 @@ import { PokeContext } from "./PokeContext";
 const PokeSignin = () => {
   const { dispatch, state } = useContext(PokeContext);
 
+useEffect( ()=> {
+  console.log("state navbar", state.user.nickname);
+},[]);
+
   return (
     <Wrapper>
         <span> <img src={wpokeball} alt="whitepokeball"/> 
@@ -37,7 +41,16 @@ span {
   display: flex;
   cursor: pointer;
   p{
-    font-family: ${theme.primaryFontFamily};
+    // font-family: ${theme.secondaryFontFamily };
+    font-family: ${theme.pokeFontfamily };
+    // font-family: ${theme.pokeFontfamily2 };
+    // font-family: ${theme.pokeFontfamily3 };
+    // font-family: ${theme.pokeFontfamily4 };
+    // font-family: ${theme.pokeFontfamily5 };
+    // font-family: ${theme.pokeFontfamily6 };
+    // font-family: ${theme.pokeFontfamily7 };
+    align-self: center;
+    font-size: 19px;
   }
     &:first-child {
       // transform: scaleX(-1);

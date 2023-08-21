@@ -83,24 +83,12 @@ useEffect( () => {
     console.log("timer is running");
     const timerId = setTimeout(() => {
       navigate(`/user/${state.user.nickname}/${state.user.pokeId}`);
-    }, 5000); // Change the delay time as needed (in milliseconds)
+    }, 1000); // Change the delay time as needed (in milliseconds)
     // Clean up the timer when the component unmounts or aUser changes
     return () => clearTimeout(timerId);
   }
 }, [ isAnonymUser]);
 
-
-
-  // const handleSignIn = () => {
-  //   // loginWithRedirect(); // Redirect to Auth0 login page for authentication
-  //     loginWithRedirect({
-  //     screen_hint: 'signup', // Directs the user to the sign-up part of Auth0
-  //   });
-  // };
-
-  // const handleLogIn = () => {
-  //   loginWithRedirect(); // Redirect to Auth0 login page for authentication
-  // };
   const handleSignIn = async () => {
     try {
       await loginWithRedirect({
@@ -140,12 +128,15 @@ const Wrapper = styled.div`
   // self-align: center;
   // self-justify: center;
   margin: 0;
-  width: 50%;
-  // height: 35px;
+  width: 55%;
+  min-height: 75%;
+  height: 400px;
   padding: 30px;
   background-color: ${theme.colors.pokeblue};
   // background-color: ${theme.colors.pokered};
   font-size: 20px;
+  border: 1px solid ${theme.colors.pokered};
+  text-align: center;
 `;
 const Abutton = styled.button`
   background-color: ${theme.colors.pokeyellow};
