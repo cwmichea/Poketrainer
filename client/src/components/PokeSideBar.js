@@ -10,26 +10,31 @@ import { NavLink } from "react-router-dom";
 const PokeSignin = () => {
   const { dispatch, state } = useContext(PokeContext);
   const [poke, setPoke] = useState(false);
+  const [submenuVisible, setSubmenuVisible] = useState(false);
+
+  const toggleSubmenu = () => {
+    setSubmenuVisible(!submenuVisible);
+  };
 useEffect( ()=> {
-  console.log("1psb state sidebar", state.user);
+  // console.log("1psb state sidebar", state.user);
   if (state.user.pokeGoals.pokegoal1.pokemon === "x" || Object.keys(state.user.pokeGoals).length === 0) {
-    console.log("2psb sidebar after init pokegoals", state.user.pokeGoals);
+    // console.log("2psb sidebar after init pokegoals", state.user.pokeGoals);
     dispatch({type: "INIT_POKEGOALS"});
-    console.log("3psb sidebar after init pokegoals", state.user.pokeGoals);
-    console.log("4psb sidebar after init pokegoal1", state.user.pokeGoals.pokegoal1);
+    // console.log("3psb sidebar after init pokegoals", state.user.pokeGoals);
+    // console.log("4psb sidebar after init pokegoal1", state.user.pokeGoals.pokegoal1);
   }
 }, [state.user.pokeGoals, dispatch]);
 useEffect( ()=> {
-    console.log("5psb 2useEffect pokegoal1", state.user.pokeGoals.pokegoal1);
-    console.log("6psb 2useEffect", state.user.pokeGoals);
+    // console.log("5psb 2useEffect pokegoal1", state.user.pokeGoals.pokegoal1);
+    // console.log("6psb 2useEffect", state.user.pokeGoals);
     setPoke(!poke);
 }, [state.user.pokeGoals ]);
 useEffect( ()=> {
-    console.log("7psb 2useEffect pokegoal1", state.user.pokeGoals.pokegoal1);
-    console.log("8psb 2useEffect", state.user.pokeGoals);
+    // console.log("7psb 2useEffect pokegoal1", state.user.pokeGoals.pokegoal1);
+    // console.log("8psb 2useEffect", state.user.pokeGoals);
 }, [ poke ]);
 
-state.user.pokeGoals.pokegoal1 && console.log("Xpsb 2useEffect pokegoal1", state.user.pokeGoals.pokegoal1);
+// state.user.pokeGoals.pokegoal1 && console.log("Xpsb 2useEffect pokegoal1", state.user.pokeGoals.pokegoal1);
   return (
     <Wrapper>
       <ul>
@@ -41,12 +46,38 @@ state.user.pokeGoals.pokegoal1 && console.log("Xpsb 2useEffect pokegoal1", state
         </AHomelink>
         <li> 
         <CenteredAlink to={`/${state.user.nickname}/${state.user.pokeId}`}>{state?.user.nickname}</CenteredAlink> </li>
+
+
         <li> 
-          <Alink 
-          to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}`}>
+        {/* <Button onClick={toggleSubmenu}>Set a Goal</Button> */}
+        <Alink 
+          // to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}`} 
+          onClick={toggleSubmenu}>
           <img src={pokeball} alt="pokeball"/>
           <p>set a goal</p>
-          </Alink>
+        </Alink>
+          {submenuVisible && (
+            <Submenu>
+              <SubmenuItem>
+                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}`} onClick={toggleSubmenu}>
+                  <img src={pokeball} alt="pokeball" />
+                  <p>Goal 1</p>
+                </Alink>
+              </SubmenuItem>
+              <SubmenuItem>
+                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal2.pokemon}/${Object.keys(state.user.pokeGoals)[1]}`} onClick={toggleSubmenu}>
+                  <img src={pokeball} alt="pokeball" />
+                  <p>Goal 2</p>
+                </Alink>
+              </SubmenuItem>
+              <SubmenuItem>
+                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}`} onClick={toggleSubmenu}>
+                  <img src={pokeball} alt="pokeball" />
+                  <p>Goal 3</p>
+                </Alink>
+              </SubmenuItem>
+            </Submenu>
+          )}
         </li>
         <li> 
           <Alink>
@@ -69,25 +100,28 @@ state.user.pokeGoals.pokegoal1 && console.log("Xpsb 2useEffect pokegoal1", state
 
       <MyPokeUl>
         <li>
-        <Alink>
-        {state.user.pokeGoals.pokegoal1.pokeimg
-          ?  <img src={state.user.pokeGoals.pokegoal1.pokeimg} alt="pokeball"/>
+        <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}`}>
+        {!(state.user.pokeGoals.pokegoal1.pokeimg === "x" ||
+        state.user.pokeGoals.pokegoal3.pokeimg === "y")
+          ?  <img style={{"height": "100px"}} src={state.user.pokeGoals.pokegoal1.pokeimg} alt="pokeball"/>
           :  <img src={pokeball} alt="pokeball"/>}
         </Alink>
         </li>
 
         <li>
-        <Alink>
-        {state.user.pokeGoals.pokegoal1.pokeimg
+        <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal2.pokemon}/${Object.keys(state.user.pokeGoals)[1]}`}>
+        {!(state.user.pokeGoals.pokegoal2.pokeimg === "x" ||
+        state.user.pokeGoals.pokegoal3.pokeimg === "y")
           ?  <img style={{"height": "100px"}} src={state.user.pokeGoals.pokegoal2.pokeimg} alt="pokeball"/>
           :  <img src={pokeball} alt="pokeball"/>}
         </Alink>
         </li>
 
         <li>
-        <Alink>
-        {state.user.pokeGoals.pokegoal1.pokeimg == "x"
-          ?  <img src={state.user.pokeGoals.pokegoal3.pokeimg} alt="pokeball"/>
+        <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}`}>
+        {!(state.user.pokeGoals.pokegoal3.pokeimg === "x" || 
+        state.user.pokeGoals.pokegoal3.pokeimg === "y")
+          ?  <img style={{"height": "100px"}} src={state.user.pokeGoals.pokegoal3.pokeimg} alt="pokeball"/>
           :  <img src={pokeball} alt="pokeball"/>}
         </Alink>
         </li>
@@ -241,5 +275,75 @@ const MyPokeUl = styled.ul`
     }
   }
 `
+const Button = styled.button`
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  margin-bottom: 14px;
+  background-color: white;
+  padding: 0px;
+  color: #1da1f2;
+  border: none;
+  cursor: pointer;
+`;
+const Submenu = styled.ul`
+  position: absolute;
+  // top: 100%;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10; /* Ensure the submenu is above other content */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 18%;
+  min-width:147px;
+`;
+const SubmenuItem = styled.li`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  color: #1da1f2;
+  font-size: 16px;
+  text-decoration: none;
 
+  img {
+    max-height: 31px;
+    padding: 0px 5px;
+  }
+
+  &:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+  }
+`;
+// const Submenu = styled.ul`
+//   display: flex;
+//   flex-direction: row;
+//   list-style: none;
+//   margin: 0;
+//   padding: 0;
+// `;
+
+// const SubmenuItem = styled.li`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   background-color: white;
+//   margin: 0;
+//   padding: 0 10px;
+//   color: #1da1f2;
+//   font-size: 16px;
+//   text-decoration: none;
+
+//   img {
+//     max-height: 31px;
+//     padding: 0px 5px;
+//   }
+// `;
 export default PokeSignin

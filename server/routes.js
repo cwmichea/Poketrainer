@@ -70,8 +70,9 @@ router.post("/create-get-user", async (req, res) => {//from PokeSignin
                   pokeimg: "x",
                   pokelvl: 0,
                   goalType: "x",
-                  currentState: "",
+                  firstState: "",
                   goalState: "",
+                  dailyTask: "",
                   firstDay: new Date(),
                   lastDay: dueDate,
                   }, 
@@ -80,8 +81,9 @@ router.post("/create-get-user", async (req, res) => {//from PokeSignin
                   pokeimg: "x",
                   pokelvl: 0,
                   goalType: "x",
-                  currentState: "",
+                  firstState: "",
                   goalState: "",
+                  dailyTask: "",
                   firstDay: new Date(),
                   lastDay: dueDate,
                   }, 
@@ -90,8 +92,9 @@ router.post("/create-get-user", async (req, res) => {//from PokeSignin
                   pokeimg: "x",
                   pokelvl: 0,
                   goalType: "x",
-                  currentState: "",
+                  firstState: "",
                   goalState: "",
+                  dailyTask: "",
                   firstDay: new Date(),
                   lastDay: dueDate,
                   }},
@@ -115,7 +118,6 @@ router.post("/create-get-user", async (req, res) => {//from PokeSignin
 
 router.post("/assign-goal", async (req, res) => {
   const { _id, sub, pokeGoals   } = req.body;
-  // console.log(req.body);
   // console.log("pokeGoals", pokeGoals);
   // console.log("_id", _id);
   // console.log("sub", sub);
@@ -138,6 +140,88 @@ router.post("/assign-goal", async (req, res) => {
       }
 
       return res.status(200).json({ status: 200, data: existingUser });
+    }
+  } catch (err) {
+    console.log(err.stack);
+    res.status(500).json({ status: 500, data: req.body, error: err.message });
+  } finally {
+    client.close();
+    console.log("Now disconnected!!");
+  }
+});
+
+
+router.post(`/:pokeId/:pokemon/setgoaldets/:pokegoal`, async (req, res) => {
+  console.log("req.body", req.body);
+  console.log("params", req.params);
+  const myGoalDets = req.body;
+  let { pokegoal, pokeId, pokemon } = req.params;
+  pokeId = Number(pokeId);
+  // console.log("myGoalDets", myGoalDets);
+  // console.log("pokeId", pokeId);
+  // console.log("pokegoal", pokegoal);
+  const client = new MongoClient(MONGO_URI, options);
+  try {
+    await client.connect();
+    const db = client.db('poketrainer');
+    // Check if a user with the same sub already exists
+    const existingUser = await db.collection("users").findOne({ pokeId: pokeId });
+    if (existingUser) {
+      let myPokeGoalUpdated = {...existingUser.pokeGoals[pokegoal], ...myGoalDets};
+      console.log("myPokeGoalUpdated", myPokeGoalUpdated);
+      // Update the existing user's data with the data from req.body
+      const updateResult = await db.collection("users").updateOne(
+        { pokeId: pokeId },
+        { $set: {[`pokeGoals.${pokegoal}`]: {...myPokeGoalUpdated}} } // Replace the existing user's data with the new data
+      );
+      console.log("existing user:", existingUser);
+      console.log("updatedResult:", updateResult);
+
+      if (updateResult.matchedCount > 0) {
+        return res.status(200).json({ status: 200, data: existingUser, pokegoalUpdated: myPokeGoalUpdated });
+      }
+      // return res.status(200).json({ status: 200, data: existingUser });
+    }
+  } catch (err) {
+    console.log(err.stack);
+    res.status(500).json({ status: 500, data: req.body, error: err.message });
+  } finally {
+    client.close();
+    console.log("Now disconnected!!");
+  }
+});
+
+
+router.post(`/:pokeId/:pokemon/setgoaldates/:pokegoal`, async (req, res) => {
+  console.log("req.body", req.body);
+  console.log("params", req.params);
+  const myGoalDates = req.body;
+  let { pokegoal, pokeId, pokemon } = req.params;
+  pokeId = Number(pokeId);
+  // console.log("myGoalDets", myGoalDets);
+  // console.log("pokeId", pokeId);
+  // console.log("pokegoal", pokegoal);
+  const client = new MongoClient(MONGO_URI, options);
+  try {
+    await client.connect();
+    const db = client.db('poketrainer');
+    // Check if a user with the same sub already exists
+    const existingUser = await db.collection("users").findOne({ pokeId: pokeId });
+    if (existingUser) {
+      let myPokeGoalUpdated = {...existingUser.pokeGoals[pokegoal], ...myGoalDates};
+      console.log("myPokeGoalUpdated", myPokeGoalUpdated);
+      // Update the existing user's data with the data from req.body
+      const updateResult = await db.collection("users").updateOne(
+        { pokeId: pokeId },
+        { $set: {[`pokeGoals.${pokegoal}`]: {...myPokeGoalUpdated}} } // Replace the existing user's data with the new data
+      );
+      console.log("existing user:", existingUser);
+      // console.log("updatedResult:", updateResult);
+
+      if (updateResult.matchedCount > 0) {
+        return res.status(200).json({ status: 200, data: existingUser, pokegoalUpdated: myPokeGoalUpdated });
+      }
+      // return res.status(200).json({ status: 200, data: existingUser });
     }
   } catch (err) {
     console.log(err.stack);

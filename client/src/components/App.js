@@ -24,7 +24,7 @@ function App() {
         <Routes>
           <Route path="/" element={<PokeSignin />} />
           <Route path="/user/:nick/:pokeId" element={<PokeHome />} />
-          <Route path="/:pokeId/:pokemon" element={<PokeSteps />} />
+          <Route path="/:pokeId/:pokemon/:pokegoal" element={<PokeSteps />} />
           {/* <Route path="/error" element={<PokError />} /> */}
         </Routes>
         {/* <PokeFooter/> */}

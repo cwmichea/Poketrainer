@@ -3,12 +3,16 @@ import { GlobalStyle, theme } from "../GlobalStyles";
 import styled from "styled-components";
 import { useState, useEffect, useContext } from "react";
 import { PokeContext } from "./PokeContext";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useParams, useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-import { PokeGoal } from './PokeGoal'
+import  PokeGoal  from './PokeGoal';
+import  PokeDates  from './PokeDates';
+
 const PokeSteps = () => {
   const { dispatch, state } = useContext(PokeContext);
-  const { pokeId, pokemon } = useParams();
+  const navigate = useNavigate();
+
+  const { pokeId, pokemon, pokegoal } = useParams();
 
   const [pokemons, setPokemons] = useState([]);
   const [pokemonsArray, setPokemons2] = useState([]);
@@ -28,6 +32,7 @@ const PokeSteps = () => {
   const [checkpointActive, setCheckpointActive] = useState(false);
 
   useEffect( () => {//init
+    setGoalNum(pokegoal);
     fetch(`/get-user/${pokeId}`)
     .then(res => res.json())
     .then(data => {
@@ -68,7 +73,26 @@ const PokeSteps = () => {
   }
 
   fetchAllPokemonNames();
-    }, []);  
+  console.log("pokemon:", pokemon);
+
+  pokemon != "x" && fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon}`)
+        .then(res => res.json())
+        .then(data => {
+          // Here, you can process the fetched data for the selected Pokémon
+          console.log("Fetched Pokémon Data:", data);
+          setMyPokemonObject(data);
+          // You can dispatch or set the fetched data to a state if needed
+          // dispatch({type: "INIT_POKEGOALS", 
+          //           pokemonName: data.name, 
+          //           pokemonImg: data.sprites.front_default, 
+          //           goalNum:goalNum});
+        })
+        .catch(error => {
+          console.error("Error fetching selected Pokémon data:", error);
+        });
+
+    // }, [pokemon]);  
+  }, [pokeId, pokemon, pokegoal]); 
 
   useEffect( () => {//start over, fetch next 20
     fetch(nextPokeApi)//#1 first 20 pokemons
@@ -112,28 +136,14 @@ const PokeSteps = () => {
   }, [loadingPrevPokemons])
 /////
   useEffect( () => {
-    let myGoal;
-    if (state.user.pokeGoals.pokegoal1.pokemon == "x") {
-      myGoal = "1";
-    } else if(state.user.pokeGoals.pokegoal2.pokemon == "x") {
-      myGoal = "2";      
-    } else{
-      myGoal = "3";
-    }
-    setGoalNum(myGoal);
-    
+    console.log("myPokemonObject", myPokemonObject);
     fetch(nextPokeApi.toString())//#2 second 20 pokemons
     .then(res => res.json())
     .then(data => {
       console.log("SECOND FETCHING", data);
       setNextPokeApi(data.next);
- 
-      // setPrevPrevPokeApi(data.previous);
-      // setPrevPokeApi(data.previous);
       let prev20Pokemons = pokemons;
       let next20Pokemons = data.results;
-      // console.log("next20Pokemons or data.results", {...next20Pokemons});
-      // console.log("prev20Pokemons collected before", {...prev20Pokemons});
       const new20Pokemons = {}; 
 
       next20Pokemons.forEach((aPokemon, index) => {
@@ -176,6 +186,7 @@ const PokeSteps = () => {
       console.error("Error fetching Pokemon data:", error);
       setLoading(false);
     });
+
   },[step1])  
 
   useEffect( () => {
@@ -196,7 +207,7 @@ const PokeSteps = () => {
           dispatch({type: "INIT_POKEGOALS", 
                     pokemonName: data.name, 
                     pokemonImg: data.sprites.front_default, 
-                    goalNum:goalNum});
+                    pokegoal});
         })
         .catch(error => {
           console.error("Error fetching selected Pokémon data:", error);
@@ -231,13 +242,30 @@ const PokeSteps = () => {
               });
           }
     }
+    // navigate(`/${state.user.pokeId}/${selectedPokemon}`)
   }, [myPokemonObject]);
 
   const handlePokemonSelection = event => {
     setSelectedPokemon(event.target.value);
     setCheckpointActive(true);
   };
-
+  const handleContinue = () => {
+    setCheckpointActive(false);
+    navigate(`/${state.user.pokeId}/${pokemon}/${pokegoal}`);
+  };
+  const handleDeselect = () => {
+    setSelectedPokemon(null);
+    setMyPokemonObject(null);
+    // You can dispatch or set the fetched data to a state if needed
+    dispatch({type: "INIT_POKEGOALS", 
+              pokemonName: "x", 
+              pokemonImg: "x", 
+              pokegoal});
+  };
+  const toggleStep2 = () => {
+    setStep2(true);
+    console.log("step2", step2);
+  };
   return (<>
   <Wrapper>
 {/* 1step */}
@@ -245,24 +273,29 @@ const PokeSteps = () => {
         <div>1step: choose your pokemon</div>
         <div style={{"display":"flex", "alignItems": "center"}}>
           <Checkpoint active={checkpointActive}
-                      onClick={() => setCheckpointActive(!checkpointActive)}/>
+                      onClick={() => {setCheckpointActive(!checkpointActive);
+                                      setSelectedPokemon(pokemon);
+                                      console.log("Check pokemon", pokemon);
+                                      }}/>
           <div>{selectedPokemon}</div> 
-          {myPokemonObject && <img src={myPokemonObject.sprites.front_default} style={{"height":"72px"}}/>}
+          {state.user.pokeGoals[pokegoal].front_default 
+          ? <img src={state.user.pokeGoals[pokegoal].front_default} style={{"height":"72px"}} />
+          : (myPokemonObject) && <img src={myPokemonObject.sprites.front_default} style={{"height":"72px"}} />}
         </div>
     </Header>
     {checkpointActive && (<>
-    <h1>Select a Pokémon:</h1>
+    <h1 style={{"margin": "10px 0"}}>Select a Pokémon:</h1>
     <Mydiv>
     {prevPokeApi && (
-    <button onClick={() => setLoadingPrevPokemons(!loadingPrevPokemons) }
+    <Button onClick={() => setLoadingPrevPokemons(!loadingPrevPokemons) }
     disabled={!prevPokeApi} >
       <FaArrowLeft /> Prev.  
-    </button>
+    </Button>
     )} 
-    <button onClick={() => setLoadingNextPokemons(!loadingNextPokemons)} 
+    <Button onClick={() => setLoadingNextPokemons(!loadingNextPokemons)} 
     disabled={!nextPokeApi }>
     Next   <FaArrowRight />
-  </button>
+  </Button>
   </Mydiv>
   <Mydiv>
     <Select onChange={handlePokemonSelection}>
@@ -274,7 +307,10 @@ const PokeSteps = () => {
         ))}
     </Select>
     {/* {selectedPokemon && ( */}
-        <Button>Continue</Button>
+        {selectedPokemon && 
+        <Button onClick={handleContinue}>Continue</Button>}
+        {(selectedPokemon || myPokemonObject) &&
+        <Button onClick={handleDeselect}>Deselect</Button>}
       {/* )} */}
   </Mydiv>
       {!loading && pokemonsArray.map((p)=> {
@@ -292,7 +328,16 @@ const PokeSteps = () => {
       })}  
     </>)}
 {/* 2step */}
-      {/* <PokeGoal/> */}
+      {/* {step2 &&  */}
+      <PokeGoal pokegoal={pokegoal} 
+      pokemon={pokemon}
+      toggleStep2={toggleStep2}
+      pokeId={pokeId}/>
+      {/* } */}
+      {step2 && <PokeDates pokemon={pokemon}
+                           pokegoal={pokegoal}
+                           step2={step2}
+                           pokeId={pokeId} />}
     </Wrapper></>
   )
 }
@@ -365,14 +410,23 @@ const Checkpoint = styled.div`
 const Select = styled.select`
   padding: 10px;
   font-size: 16px;
+  background-color: ${theme.colors.pokeblue};
+  border: 0px;
+  border-radius: 10px;
+  color: white;
 `;
 
 const Button = styled.button`
-  margin-top: 10px;
+  // margin-top: 10px;
   padding: 10px 20px;
   font-size: 16px;
-  background-color: blue;
+  background-color: ${theme.colors.pokeblue};
+  border-radius: 12px;
   color: white;
   border: none;
   cursor: pointer;
+  &:hover {
+    // background-color: #f5f5f5;
+    background-color: ${theme.colors.pokeyellow};
+  }
 `;

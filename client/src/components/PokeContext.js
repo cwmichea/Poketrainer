@@ -28,10 +28,10 @@ const myReducer = (state, action) => {
         };
     case "INIT_POKEGOALS":
         console.log("2.5reducer console", state.user.pokeGoals);
-        console.log("2.5goalNum", action.goalNum);
+        console.log("2.5goalNum", action.pokegoal);
         let pokeName = action.pokemonName || 'y';
         let pokeImg = action.pokemonImg || 'y';
-        let currentGoal = action.goalNum || "1";
+        let currentGoal = action.pokegoal || "pokegoal1";
         return {
           // init first goal
           ...state,
@@ -40,7 +40,8 @@ const myReducer = (state, action) => {
             pokeGoals: {
               ...state.user.pokeGoals,
               // pokegoal1: {
-                [`pokegoal${currentGoal}`]: {
+                // [`pokegoal${currentGoal}`]: {
+                [`${currentGoal}`]: {
                     ...state.user.pokeGoals.pokegoal1,
                     pokemon: pokeName,
                     pokeimg: pokeImg,
