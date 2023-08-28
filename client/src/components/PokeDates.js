@@ -207,7 +207,7 @@ const PokeDates = ({pokemon, pokegoal, step2, pokeId}) => {
           )}
           <Button disabled={!dueDate}
           style={{"margin-top":"12px"}}
-          onClick={handleDates}>Set Date</Button>
+          onClick={handleDates}>Set Date & Set Goal</Button>
         </div>
       <div>
         <img src=''/>

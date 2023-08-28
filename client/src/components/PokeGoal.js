@@ -24,6 +24,7 @@ const PokeGoal = ({pokegoal, pokemon, toggleStep2, pokeId}) => {
  const [dailyTask, setDailyTask] = useState("");
  const [prevDailyTask, setPrevDailyTask] = useState("");
  const [duration, setDuration] = useState("");
+ const [firstState, setFirstState] = useState("");
  const [done, setDone] = useState(false);
 
  const { dispatch, state } = useContext(PokeContext);
@@ -71,6 +72,7 @@ const PokeGoal = ({pokegoal, pokemon, toggleStep2, pokeId}) => {
       goalValue: goalValue,
       keyAmount: keyAmount,
       dailyTask: dailyTask,
+      firstState: firstState,
     }
     console.log(myGoalDets);
     fetch(`setgoaldets/${pokegoal}`, {
@@ -132,6 +134,7 @@ const PokeGoal = ({pokegoal, pokemon, toggleStep2, pokeId}) => {
     }
     // setGoalResume(myGoalResume);
     setDailyTask(myDailyTask);
+    !firstState && setFirstState(0);
   }
 
     useEffect(()=> {
@@ -151,6 +154,7 @@ console.log("myAction", myAction);
 
 // }, [goalType]);
 }, [dailyTask]);
+console.log("firstState", firstState);
 
   return (
   <>
@@ -190,12 +194,13 @@ console.log("myAction", myAction);
                                                      setBodyActive(false);
                                                      setPressed1(!pressed1);
                                                      setPressed2(false);
-                                                     setTraining("Mind");//x
+                                                     setTraining("Mind");
                                                      setMeasurementType("default");
-                                                     setGoalType("");//x
+                                                     setGoalType("");
                                                      setGoalValue("");
-                                                     setKeyAmount("");//x
-                                                     setDailyTask("");//x
+                                                     setKeyAmount("");
+                                                     setDailyTask("");
+                                                     setFirstState("");
                                                      setMyAction("");//onlybody
                                                      setPrevDailyTask("");//onlybody
                                                      setDuration("");//only body
@@ -210,6 +215,7 @@ console.log("myAction", myAction);
                                                      setGoalValue("");
                                                      setKeyAmount("");
                                                      setDailyTask("");
+                                                     setFirstState("");
              }}>Body <FaDumbbell /></Button>
         </div>
         
@@ -234,8 +240,19 @@ console.log("myAction", myAction);
           onInput={(e) => {
           e.target.value = e.target.value.replace(/[^\d.]/g, '');
           setGoalValue(e.target.value);
-        }}
-        /> <span> pages</span> </>)}
+          }}/> 
+          <span> pages</span> 
+          <p>starting from: </p>
+          <Input  id="intValue" 
+                    type='text'
+                    pattern="[0-9]*(\.[0-9]{0,1})?"
+                    style={{"width": "30px", "height": "33px"}}
+                    maxLength="3"
+                    onInput={(event) => {
+                      event.target.value = event.target.value.replace(/[^\d.]/g, '');
+                      setFirstState(Number(event.target.value));
+                    }}/>
+          <span> pages</span></>)}
         </div>
         {((measurementType != "default" && measurementType != "pages") || (measurementType === "pages" && goalValue)) 
         && ( 
@@ -318,7 +335,8 @@ console.log("myAction", myAction);
                     style={{"width": "30px", "height": "33px"}}
                     maxLength="3"
                     onInput={(event) => {
-                        event.target.value = event.target.value.replace(/[^\d.]/g, '');
+                      event.target.value = event.target.value.replace(/[^\d.]/g, '');
+                      setFirstState(Number(event.target.value));
                     }}/>
             <span> . </span>
             <Input  id="decimalValue" 
@@ -327,7 +345,8 @@ console.log("myAction", myAction);
                     style={{"width": "20px", "height": "33px"}}
                     maxLength="1"
                     onInput={(event) => {
-                        event.target.value = event.target.value.replace(/[^\d.]/g, '');
+                      event.target.value = event.target.value.replace(/[^\d.]/g, '');
+                      setFirstState(firstState => (Number(event.target.value)*(0.1) + firstState));
                     }}/>
             <span>{measurementType === "cm" ? " cm" : " kg"}</span>
             <div>

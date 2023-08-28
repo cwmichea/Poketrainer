@@ -10,6 +10,7 @@ import { PokeContext } from "./PokeContext";
 // import { PokeProcess } from "./PokeProcess";
 // import PokeSteps from "./PokeSteps";
 import PokeSteps from "./PokeSteps";
+import PokeCheck from "./PokeCheck";
 
 function App() {
   const {   state } = useContext(PokeContext);
@@ -25,6 +26,7 @@ function App() {
           <Route path="/" element={<PokeSignin />} />
           <Route path="/user/:nick/:pokeId" element={<PokeHome />} />
           <Route path="/:pokeId/:pokemon/:pokegoal" element={<PokeSteps />} />
+          <Route path="/:pokeId/:pokemon/:pokegoal/check" element={<PokeCheck />} />
           {/* <Route path="/error" element={<PokError />} /> */}
         </Routes>
         {/* <PokeFooter/> */}
