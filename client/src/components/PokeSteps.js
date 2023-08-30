@@ -7,6 +7,8 @@ import { NavLink, useParams, useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import  PokeGoal  from './PokeGoal';
 import  PokeDates  from './PokeDates';
+import wpokeball from "../pics/whitepokeball.png";
+
 
 const PokeSteps = () => {
   const { dispatch, state } = useContext(PokeContext);
@@ -30,6 +32,23 @@ const PokeSteps = () => {
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [myPokemonObject, setMyPokemonObject] = useState(null);
   const [checkpointActive, setCheckpointActive] = useState(false);
+
+  const [myPokeGoal, setMyPokeGoal] = useState(state.user.pokeGoals[pokegoal] || "")
+  const [visible, setVisible] = useState(false);
+  const [visibleStep3, setVisibleStep3] = useState(false);
+  
+  useEffect(() => {
+    if (!myPokeGoal) {
+      setMyPokeGoal(state.user.pokeGoals[pokegoal]);
+    }
+    setVisible(true);
+
+    const timer = setTimeout(() => {
+      setVisible(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect( () => {//init
     setGoalNum(pokegoal);
@@ -264,9 +283,54 @@ const PokeSteps = () => {
   };
   const toggleStep2 = () => {
     setStep2(true);
+    setVisibleStep3(true);
     console.log("step2", step2);
+    const timer = setTimeout(() => {
+      setVisible(false);
+      setStep2(false);
+      setStep3(false);
+    }, 3500);
+
+    return () => {
+      clearTimeout(timer);
+    };
   };
-  return (<>
+  const toggleStep3 = () => {
+    setStep2(true);
+    setStep3(true);
+    console.log("step3", step3);
+    const timer = setTimeout(() => {
+      setVisible(false);
+      setStep2(false);
+      setStep3(false);
+      navigate(`/user/${state.user.nickname}/${pokeId}`);
+    }, 3500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  };
+
+useEffect(() => {
+  if(step3 || step2)
+  setVisible(true);
+},[step2, step3])
+return (<>
+    <ModalContainer visible={visible}>
+      <ModalContent>
+        <ModalImage src={wpokeball} alt="whitepokeball" />
+        <CloseButton onClick={() => setVisible(false)}>X</CloseButton>
+        {step2 ? (step3) ? <h3>Congrats! you set a new goal</h3>
+                         : <h3>Almost Done! just one more step</h3>
+              : <h3>Follow the steps to set your goal</h3>}
+        {step2 ? (step3) ?  <p>Changes have been made</p>
+                         : <p>Pick the dates now!</p>
+              : (  state.user.pokeGoals[pokegoal][pokemon] != "x"
+                || state.user.pokeGoals[pokegoal][pokemon] != "y" ) 
+                  ? <h3>Modify anything from your goal here</h3>
+                  : <h3>Start by pick a pokemon!</h3>}
+      </ModalContent>
+    </ModalContainer>
   <Wrapper>
 {/* 1step */}
     <Header>
@@ -334,10 +398,13 @@ const PokeSteps = () => {
       toggleStep2={toggleStep2}
       pokeId={pokeId}/>
       {/* } */}
-      {step2 && <PokeDates pokemon={pokemon}
+      {(visibleStep3 
+      || myPokeGoal.daysInterval
+      ) && <PokeDates pokemon={pokemon}
                            pokegoal={pokegoal}
                            step2={step2}
-                           pokeId={pokeId} />}
+                           pokeId={pokeId} 
+                           toggleStep3={toggleStep3}/>}
     </Wrapper></>
   )
 }
@@ -429,4 +496,42 @@ const Button = styled.button`
     // background-color: #f5f5f5;
     background-color: ${theme.colors.pokeyellow};
   }
+`;
+
+const ModalContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: ${props => (props.visible ? 'flex' : 'none')};
+  justify-content: center;
+  align-items: center;
+`;
+
+const ModalContent = styled.div`
+  background-color: white;
+  background-color: ${theme.colors.pokered};
+  opacity: 80%;
+  padding: 40px;
+  border-radius: 5px;
+  text-align: center;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  border: none;
+  background: ${theme.colors.pokered};
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 25px;
+  padding: 12px;
+`;
+
+const ModalImage = styled.img`
+  width: 100px;
+  height: auto;
 `;

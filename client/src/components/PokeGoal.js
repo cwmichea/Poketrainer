@@ -361,7 +361,8 @@ console.log("firstState", firstState);
                 <option value="eating healthy">eating healthy</option>
             </Select>
             <span> during </span>
-             {dailyTask != "eating healthy" ? (<><Input id="duration" 
+             {prevDailyTask != "eating healthy" 
+                ? (<><Input id="duration" 
                     type='text'
                     pattern="[0-9]*(\.[0-9]{0,1})?"
                     style={{"width": "28px", "height": "33px"}}
@@ -369,7 +370,8 @@ console.log("firstState", firstState);
                     onInput={(event) => {
                         event.target.value = event.target.value.replace(/[^\d.]/g, '');
                         setDuration(event.target.value);
-                    }}/> <span> min </span></>) : "a day" }
+                    }}/> <span> min </span></>) 
+                : "a day" }
             </div>
 
             {dailyTask != "default" && 

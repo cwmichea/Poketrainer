@@ -3,14 +3,17 @@ import {  theme } from "../GlobalStyles";
 import styled from "styled-components";
 import { useState, useEffect, useContext } from "react";
 import { PokeContext } from "./PokeContext";
+import { NavLink, useParams, useNavigate } from "react-router-dom";
 
-const PokeDates = ({pokemon, pokegoal, step2, pokeId}) => {
+const PokeDates = ({pokemon, pokegoal, toggleStep3, pokeId}) => {
+  const { dispatch, state } = useContext(PokeContext);
+  const navigate = useNavigate();
+  // const []
   const [checkpointActive, setCheckpointActive] = useState(false);
   const [startDate, setStartDate] = useState(null); 
   const [dueDate, setDueDate] = useState(null); 
   const [day1, setDay1] = useState(""); 
   const [day0, setDay0] = useState(""); 
-  const { dispatch, state } = useContext(PokeContext);
   const [myPokeGoal, setMyPokeGoal] = useState(state.user.pokeGoals[pokegoal]);
 
   const [selectedInterval, setSelectedInterval] = useState(null);
@@ -81,7 +84,7 @@ const PokeDates = ({pokemon, pokegoal, step2, pokeId}) => {
       day1: day1,
       day0: day0,
     }
-    console.log(myGoalDates);
+    console.log("myGoalDates", myGoalDates);
     fetch(`setgoaldates/${pokegoal}`, {
       method: "POST",
       headers: {
@@ -105,6 +108,7 @@ const PokeDates = ({pokemon, pokegoal, step2, pokeId}) => {
         // Handle any errors that occurred during the fetch or processing
         console.error('Fetch error:', error);
       });
+    toggleStep3();
   }
 
   useEffect(() => {

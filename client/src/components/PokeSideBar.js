@@ -17,7 +17,17 @@ const PokeSignin = () => {
 
   const toggleSubmenu = () => {
     setSubmenuVisible(!submenuVisible);
+    setSubmenuVisible1(false);
+    setSubmenuVisible2(false);
+    setSubmenuVisible3(false);
   };
+
+const closeAll = () => {
+  setSubmenuVisible(false);
+  setSubmenuVisible1(false);
+  setSubmenuVisible2(false);
+  setSubmenuVisible3(false);
+}
 useEffect( ()=> {
   // console.log("1psb state sidebar", state.user);
   if (state.user.pokeGoals.pokegoal1.pokemon === "x" || Object.keys(state.user.pokeGoals).length === 0) {
@@ -35,13 +45,14 @@ useEffect( ()=> {
 useEffect( ()=> {
     // console.log("7psb 2useEffect pokegoal1", state.user.pokeGoals.pokegoal1);
     // console.log("8psb 2useEffect", state.user.pokeGoals);
+    console.log("9psb 2useEffect", state.user.pokeGoals.pokegoal1.pokemon);
 }, [ poke ]);
 
 // state.user.pokeGoals.pokegoal1 && console.log("Xpsb 2useEffect pokegoal1", state.user.pokeGoals.pokegoal1);
   return (
     <Wrapper>
       <ul>
-        <AHomelink to="/">
+        <AHomelink to="/" onClick={closeAll}>
           <IconWrapper>
             <span><img src={wpokeball} alt="whitepokeball"/></span>           
           </IconWrapper>
@@ -62,19 +73,19 @@ useEffect( ()=> {
           {submenuVisible && (
             <Submenu>
               <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}`} onClick={toggleSubmenu}>
+                <Alink onClick={closeAll} to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}`} >
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 1</p>
                 </Alink>
               </SubmenuItem>
               <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal2.pokemon}/${Object.keys(state.user.pokeGoals)[1]}`} onClick={toggleSubmenu}>
+                <Alink onClick={closeAll} to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal2.pokemon}/${Object.keys(state.user.pokeGoals)[1]}`} >
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 2</p>
                 </Alink>
               </SubmenuItem>
               <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}`} onClick={toggleSubmenu}>
+                <Alink onClick={closeAll} to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}`}  >
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 3</p>
                 </Alink>
@@ -83,26 +94,29 @@ useEffect( ()=> {
           )}
         </li>
         <li> 
-          <Alink onClick={() => setSubmenuVisible1(!submenuVisible1)}>
+          <Alink onClick={() => {setSubmenuVisible1(!submenuVisible1);
+                                setSubmenuVisible(false);
+                                setSubmenuVisible2(false);
+                                setSubmenuVisible3(false);}}>
           <img src={pokeball} alt="pokeball"/>
           <p>check a daily task</p>
           </Alink>
           {submenuVisible1 && (
             <Submenu>
               <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}/check`} onClick={toggleSubmenu}>
+                <Alink onClick={closeAll} to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}/check`}  >
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 1</p>
                 </Alink>
               </SubmenuItem>
               <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal2.pokemon}/${Object.keys(state.user.pokeGoals)[1]}/check`} onClick={toggleSubmenu}>
+                <Alink onClick={closeAll} to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal2.pokemon}/${Object.keys(state.user.pokeGoals)[1]}/check`}  >
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 2</p>
                 </Alink>
               </SubmenuItem>
               <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}/check`} onClick={toggleSubmenu}>
+                <Alink onClick={closeAll} to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}/check`} >
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 3</p>
                 </Alink>
@@ -110,26 +124,29 @@ useEffect( ()=> {
             </Submenu>)}
         </li>
         <li> 
-          <Alink onClick={() => setSubmenuVisible2(!submenuVisible2)}>
+          <Alink onClick={() => {setSubmenuVisible2(!submenuVisible2)
+                                          setSubmenuVisible(false);
+                                          setSubmenuVisible(false);
+                                          setSubmenuVisible3(false);}}>
           <img src={pokeball} alt="pokeball"/>
           <p>track progress</p>
           </Alink>
           {submenuVisible2 && (
             <Submenu>
               <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}/check`} onClick={toggleSubmenu}>
+                <Alink onClick={closeAll} to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}/track`}  >
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 1</p>
                 </Alink>
               </SubmenuItem>
               <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal2.pokemon}/${Object.keys(state.user.pokeGoals)[1]}/check`} onClick={toggleSubmenu}>
+                <Alink onClick={closeAll} to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal2.pokemon}/${Object.keys(state.user.pokeGoals)[1]}/track`} >
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 2</p>
                 </Alink>
               </SubmenuItem>
               <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}/check`} onClick={toggleSubmenu}>
+                <Alink onClick={closeAll} to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}/track`}  >
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 3</p>
                 </Alink>
@@ -137,26 +154,29 @@ useEffect( ()=> {
             </Submenu>)}
         </li>
         <li> 
-          <Alink onClick={() => setSubmenuVisible3(!submenuVisible3)}>
+          <Alink onClick={() => {setSubmenuVisible3(!submenuVisible3)
+                                                    setSubmenuVisible(false);
+                                                    setSubmenuVisible(false);
+                                                    setSubmenuVisible(false);}}>
           <img src={pokeball} alt="pokeball"/>
           <p>set a state</p>
           </Alink>
           {submenuVisible3 && (
             <Submenu>
               <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}/check`} onClick={toggleSubmenu}>
+                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}/check`} onClick={closeAll}>
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 1</p>
                 </Alink>
               </SubmenuItem>
               <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal2.pokemon}/${Object.keys(state.user.pokeGoals)[1]}/check`} onClick={toggleSubmenu}>
+                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal2.pokemon}/${Object.keys(state.user.pokeGoals)[1]}/check`} onClick={closeAll}>
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 2</p>
                 </Alink>
               </SubmenuItem>
               <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}/check`} onClick={toggleSubmenu}>
+                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}/check`} onClick={closeAll}>
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 3</p>
                 </Alink>
@@ -167,16 +187,16 @@ useEffect( ()=> {
 
       <MyPokeUl>
         <li>
-        <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}`}>
+        <Alink onClick={closeAll} to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}`}>
         {!(state.user.pokeGoals.pokegoal1.pokeimg === "x" ||
-        state.user.pokeGoals.pokegoal3.pokeimg === "y")
+        state.user.pokeGoals.pokegoal1.pokeimg === "y")
           ?  <img style={{"height": "100px"}} src={state.user.pokeGoals.pokegoal1.pokeimg} alt="pokeball"/>
           :  <img src={pokeball} alt="pokeball"/>}
         </Alink>
         </li>
 
         <li>
-        <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal2.pokemon}/${Object.keys(state.user.pokeGoals)[1]}`}>
+        <Alink onClick={closeAll} to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal2.pokemon}/${Object.keys(state.user.pokeGoals)[1]}`}>
         {!(state.user.pokeGoals.pokegoal2.pokeimg === "x" ||
         state.user.pokeGoals.pokegoal3.pokeimg === "y")
           ?  <img style={{"height": "100px"}} src={state.user.pokeGoals.pokegoal2.pokeimg} alt="pokeball"/>
@@ -185,7 +205,7 @@ useEffect( ()=> {
         </li>
 
         <li>
-        <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}`}>
+        <Alink onClick={closeAll} to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}`}>
         {!(state.user.pokeGoals.pokegoal3.pokeimg === "x" || 
         state.user.pokeGoals.pokegoal3.pokeimg === "y")
           ?  <img style={{"height": "100px"}} src={state.user.pokeGoals.pokegoal3.pokeimg} alt="pokeball"/>

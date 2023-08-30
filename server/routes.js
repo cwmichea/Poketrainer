@@ -232,5 +232,45 @@ router.post(`/:pokeId/:pokemon/setgoaldates/:pokegoal`, async (req, res) => {
   }
 });
 
+
+router.post(`/:pokeId/:pokemon/:pokegoal/setgoaldays/`, async (req, res) => {
+  // console.log("req.body", req.body);
+  // console.log("params", req.params);
+  const {daysObj, checkDays} = req.body;
+  const myGoalDays = daysObj;
+  let { pokegoal, pokeId, pokemon } = req.params;
+  pokeId = Number(pokeId);
+  console.log("checkdays", checkDays);
+  console.log("daysObj", daysObj);
+  const client = new MongoClient(MONGO_URI, options);
+  try {
+    await client.connect();
+    const db = client.db('poketrainer');
+    // Check if a user with the same sub already exists
+    const existingUser = await db.collection("users").findOne({ pokeId: pokeId });
+    if (existingUser) {
+      let myPokeGoalUpdated = {...existingUser.pokeGoals[pokegoal], 
+                              myJourney: {...myGoalDays},
+                              checkDays};
+      console.log("myPokeGoalUpdated", myPokeGoalUpdated);
+      // Update the existing user's data with the data from req.body
+      const updateResult = await db.collection("users").updateOne(
+        { pokeId: pokeId },
+        { $set: {[`pokeGoals.${pokegoal}`]: {...myPokeGoalUpdated}} } // Replace the existing user's data with the new data
+      );
+      // console.log("existing user:", existingUser);
+
+      if (updateResult.matchedCount > 0) {
+        return res.status(200).json({ status: 200, data: existingUser, pokegoalUpdated: myPokeGoalUpdated });
+      }
+    }
+    }catch (err) {
+    console.log(err.stack);
+    res.status(500).json({ status: 500, data: req.body, error: err.message });
+  } finally {
+    client.close();
+    console.log("Now disconnected!!");
+  }
+});
 module.exports = router;
 // module.exports = {router, seats};
