@@ -74,7 +74,7 @@ router.post("/create-get-user", async (req, res) => {//from PokeSignin
                   goalState: "",
                   dailyTask: "",
                   firstDay: new Date(),
-                  lastDay: dueDate,
+                  lastDay: "",
                   }, 
 
                   pokegoal2:{pokemon: "x",
@@ -85,7 +85,7 @@ router.post("/create-get-user", async (req, res) => {//from PokeSignin
                   goalState: "",
                   dailyTask: "",
                   firstDay: new Date(),
-                  lastDay: dueDate,
+                  lastDay: "",
                   }, 
 
                   pokegoal3:{pokemon: "x",
@@ -96,7 +96,7 @@ router.post("/create-get-user", async (req, res) => {//from PokeSignin
                   goalState: "",
                   dailyTask: "",
                   firstDay: new Date(),
-                  lastDay: dueDate,
+                  lastDay: "",
                   }},
     };
     console.log("new user", newUser);
@@ -263,6 +263,66 @@ router.post(`/:pokeId/:pokemon/:pokegoal/setgoaldays/`, async (req, res) => {
       if (updateResult.matchedCount > 0) {
         return res.status(200).json({ status: 200, data: existingUser, pokegoalUpdated: myPokeGoalUpdated });
       }
+    }
+    }catch (err) {
+    console.log(err.stack);
+    res.status(500).json({ status: 500, data: req.body, error: err.message });
+  } finally {
+    client.close();
+    console.log("Now disconnected!!");
+  }
+});
+
+
+router.post(`/delete-pokegoal/:pokegoal/:pokeId`, async (req, res) => {
+  let {  pokeId, pokegoal } = req.params;
+  const myOldPokegoal = req.body;
+  const myPokegoal2Delete = pokegoal;
+  // console.log("req.body", req.body);
+  // console.log("req.params", req.params);
+  console.log("-------------------------", req.params);
+  console.log("myOldPokegoal", myOldPokegoal);
+  console.log("pokegoal", pokegoal);
+  pokeId = Number(pokeId);
+  const client = new MongoClient(MONGO_URI, options);
+  try {
+    await client.connect();
+    const db = client.db('poketrainer');
+    // Check if a user with the same sub already exists
+    const existingUser = await db.collection("users").findOne({ pokeId: pokeId });
+    if (existingUser) {
+      let index = 1 ;
+      index = (existingUser?.index) 
+            ? (existingUser.index + 1) 
+            : 1;
+      let myPokeGoalUpdated = {pokemon: "x",
+                              pokeimg: "x",
+                              pokelvl: 0,
+                              goalType: "x",
+                              firstState: "",
+                              goalState: "",
+                              dailyTask: "",
+                              firstDay: new Date(),
+                              lastDay: "",
+                              };
+      console.log("index here", index);
+      console.log("myPokegoal to delete", myPokegoal2Delete)
+      console.log("myPokeGoalUpdated", myPokeGoalUpdated);
+      // Update the existing user's data with the data from req.body
+      const updateResult = await db.collection("users").updateOne(
+        { pokeId: pokeId },
+        { $set: {
+              [`pokeGoals.${myPokegoal2Delete}`]: {...myPokeGoalUpdated},
+              index: index ,      
+              oldPokegoals: { ...existingUser.oldPokegoals,
+                 [`oldPokegoal${index}`]: {...myOldPokegoal}} 
+              } } 
+      );
+      // console.log("existing user:", existingUser);
+
+      // if (updateResult.matchedCount > 0) {
+        return res.status(200).json({ status: 200, data: existingUser, pokegoalUpdated: myPokeGoalUpdated });
+      // }
     }
     }catch (err) {
     console.log(err.stack);
