@@ -86,7 +86,6 @@ const Pokediv = styled.div`
 //   background-color: white;
 //   height: 98%;
   height: 525px;
-//   background-color: white;
   // text-align: center;
   // flex-direction: column;
   // align-items: center; /* Center horizontally */
