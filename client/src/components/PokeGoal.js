@@ -41,13 +41,19 @@ const PokeGoal = ({pokegoal, pokemon, toggleStep2, pokeId}) => {
       console.log("new goal type function", newGoalType);}
     else if(newType === "words" || newType === "min" ) {
       newGoalType = "learn a language";
+    }
+    else if( newType === "min." ) {
+      newGoalType = "meditate";
+    }     
+    else if( newType === " min." ) {
+      newGoalType = "study";
     } 
     //BODY
-    else if (newType === "working out" ||
-            newType === "jogging" || 
-            newType === "playing a sport" || 
-            newType === "physical activity" || 
-            newType === "eating healthy" 
+    else if (newType === "Working out" ||
+            newType === "Jogging" || 
+            newType === "Playing a sport" || 
+            newType === "Physical activity" || 
+            newType === "Eating healthy" 
             ) 
       newGoalType = `${newType} to ${myAction} a few ${measurementType}`;
     setGoalType(newGoalType);
@@ -56,7 +62,7 @@ const PokeGoal = ({pokegoal, pokemon, toggleStep2, pokeId}) => {
   const handleDaylyTaskChange = (event) => {
     setPrevDailyTask(event.target.value);
     let myDuration = "";
-    if (event.target.value === "eating healthy") {
+    if (event.target.value === "Eating healthy") {
       myDuration = "a day";
     }
     setDuration(myDuration);
@@ -115,6 +121,12 @@ const PokeGoal = ({pokegoal, pokemon, toggleStep2, pokeId}) => {
     break;
     case "min":
       myDailyTask = `Practice speaking ${keyAmount} min. a day`;
+    break;
+    case "min.":
+      myDailyTask = `Meditate ${keyAmount} min. a day`;
+    break;
+    case " min.":
+      myDailyTask = `Study ${duration} for ${keyAmount} min. a day`;
     break;
     case "words":
       myDailyTask = `Learn ${keyAmount} words a day`;
@@ -216,6 +228,7 @@ console.log("firstState", firstState);
                                                      setKeyAmount("");
                                                      setDailyTask("");
                                                      setFirstState("");
+                                                     setDuration("");
              }}>Body <FaDumbbell /></Button>
         </div>
         
@@ -231,8 +244,19 @@ console.log("firstState", firstState);
             <option value="pages">Read a book (pages)</option>
             <option value="words">Learn a new language (words)</option>
             <option value="min">Speak a new language (min)</option>
+            <option value=" min.">Study (min)</option>
+            <option value="min.">Meditate (min)</option>
             <option value="words">Increase vocabulary (words)</option>
         </Select>
+        {measurementType ===" min." && (<> 
+          <span>. </span>
+          <Input id="amount"  style={{"width":"100px",            
+          "height": "33px",
+            }}
+          onInput={(e) => {
+            setDuration(e.target.value);
+          }}/> 
+        </>) }
         {measurementType ==="pages" && (<><span> of </span> 
           <Input id="amount"  style={{"width":"40px",            
           "height": "33px",
@@ -253,8 +277,11 @@ console.log("firstState", firstState);
                       setFirstState(Number(event.target.value));
                     }}/>
           <span> pages</span></>)}
+
         </div>
-        {((measurementType != "default" && measurementType != "pages") || (measurementType === "pages" && goalValue)) 
+        {((measurementType != "default" && measurementType != "pages") 
+        || (measurementType === "pages" && goalValue)
+        || (measurementType === " min." && keyAmount)) 
         && ( 
         <div> 
           <h3>Set your daily task</h3>
@@ -271,7 +298,13 @@ console.log("firstState", firstState);
             ? " pages read by day"
             : (measurementType === "min") 
                 ? " min. practice speaking a day"
-                : " new words learnt a day"}
+                : (measurementType === "words") 
+                  ? " new words learnt a day"
+                  : (measurementType === " min.")
+                    ? " min. studying a day"
+                    : (measurementType === "min.")
+                      ? " min. meditating a day"
+                      : " "}
 
         {/* mind fitness button */}
           {(goalType && keyAmount) && 
@@ -354,11 +387,11 @@ console.log("firstState", firstState);
              <Select onChange={e => {handleDaylyTaskChange(e);
                                     handleGoalTypeChange(e)}}>
                 <option default value="default">Select an option</option>
-                <option value="working out">working out</option>
-                <option value="jogging">jogging</option>
-                <option value="playing a sport">playing a sport</option>
-                <option value="physical activity">physical activity</option>
-                <option value="eating healthy">eating healthy</option>
+                <option value="Working out">working out</option>
+                <option value="Jogging">jogging</option>
+                <option value="Playing a sport">playing a sport</option>
+                <option value="Physical activity">physical activity</option>
+                <option value="Eating healthy">eating healthy</option>
             </Select>
             <span> during </span>
              {prevDailyTask != "eating healthy" 

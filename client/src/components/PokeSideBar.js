@@ -133,7 +133,7 @@ useEffect( ()=> {
           </Alink>
           {submenuVisible2 && (
             <Submenu>
-              {state.user.pokeGoals.pokegoal1?.lastDay && <SubmenuItem>
+              {state.user.pokeGoals.pokegoal1?.checkDays && <SubmenuItem>
                 <Alink onClick={closeAll} to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}/track`}  >
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 1</p>
@@ -153,36 +153,36 @@ useEffect( ()=> {
               </SubmenuItem>}
             </Submenu>)}
         </li>
-        <li> 
+        {/* <li> 
           <Alink onClick={() => {setSubmenuVisible3(!submenuVisible3)
                                                     setSubmenuVisible(false);
                                                     setSubmenuVisible(false);
                                                     setSubmenuVisible(false);}}>
           <img src={pokeball} alt="pokeball"/>
-          <p>set a state</p>
+          <p>see stats</p>
           </Alink>
           {submenuVisible3 && (
             <Submenu>
                {state.user.pokeGoals.pokegoal1?.lastDay && <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}/check`} onClick={closeAll}>
+                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal1.pokemon}/${Object.keys(state.user.pokeGoals)[0]}/stats`} onClick={closeAll}>
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 1</p>
                 </Alink>
               </SubmenuItem>}
               {state.user.pokeGoals.pokegoal2?.lastDay && <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal2.pokemon}/${Object.keys(state.user.pokeGoals)[1]}/check`} onClick={closeAll}>
+                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal2.pokemon}/${Object.keys(state.user.pokeGoals)[1]}/stats`} onClick={closeAll}>
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 2</p>
                 </Alink>
               </SubmenuItem>}
               {state.user.pokeGoals.pokegoal3?.lastDay && <SubmenuItem>
-                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}/check`} onClick={closeAll}>
+                <Alink to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}/stats`} onClick={closeAll}>
                   <img src={pokeball} alt="pokeball" />
                   <p>Goal 3</p>
                 </Alink>
               </SubmenuItem>}
             </Submenu>)}
-        </li>
+        </li> */}
         
 
       <MyPokeUl>
@@ -288,11 +288,12 @@ const Wrapper = styled.div`
   width: 23%; //23% de la ventana sin importar cuan chico es
   // max-width: 150px; // este es tu maximo
   min-width: 148px; 
-  height: 500px; //no menos q esto
+  height: 517px; //no menos q esto
   max-height: 60%; //puedes crecer todo lo q quieras
-  
+  padding-top: 8px;
+  border-radius: 15px;
   background-color: ${theme.colors.pokeblue};
-  border: 1px solid ${theme.colors.pokered};
+  // border: 1px solid ${theme.colors.pokered};
 ul{
   padding: 0;
   
@@ -357,7 +358,7 @@ const MyPokeUl = styled.ul`
     margin: 10px;
     
     img {
-      max-height: 35px;
+      max-height: 55px;
       padding: 3px; /* Adjust the padding value to create spacing around the images */
     }
   }

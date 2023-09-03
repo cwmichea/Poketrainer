@@ -9,6 +9,7 @@ import wpokeball from "../pics/whitepokeball.png";
 import { FaTicketAlt } from 'react-icons/fa';
 import { FaCheck } from 'react-icons/fa';
 import { FaTrash } from 'react-icons/fa'; // Import the trash icon
+import { PieChart, Pie, Cell,  Label } from 'recharts';
 
 const PokeHome = () => {
   const { nick, pokeId } = useParams();
@@ -23,6 +24,18 @@ const PokeHome = () => {
   // Now you can use the values of nick and pokeId in your component logic
   // For example, you can fetch data based on these parameters or render content accordingly
   const [loading, setLoading] = useState(true);
+  const [today, setToday] = useState(new Date());
+
+  const [daysRemaining1, setDaysRemaining1] = useState("");
+  const [daysRemaining2, setDaysRemaining2] = useState("");
+  const [daysRemaining3, setDaysRemaining3] = useState("");
+  // const [daysRemaining1, setDaysRemaining1] = useState(Math.floor((new Date(state.user.pokeGoals.pokegoal1?.lastDay) - new Date()) / (1000 * 60 * 60 * 24)) || "");
+  const createChartData = (daysRemaining, daysInterval) => [
+    { name: 'Remaining days', value: daysRemaining },
+    { name: 'Past days', value: daysInterval - daysRemaining },
+  ];
+
+  const COLORS = [theme.colors.pokeblue, theme.colors.pokered]; 
   useEffect( ()=> {
     console.log("user", state.user);
     fetch(`/get-user/${pokeId}`)
@@ -30,14 +43,22 @@ const PokeHome = () => {
     .then(data => {
       console.log("state pokehome", state.user, "data" , data);     
       dispatch({type: "ASSIGN_USER", payload: data.data});
+      // console.log(data.data);
+        setDaysRemaining1(Math.floor((new Date(data.data.pokeGoals.pokegoal1?.lastDay) - new Date()) / (1000 * 60 * 60 * 24)));
+        setDaysRemaining2(Math.floor((new Date(state.user.pokeGoals.pokegoal2?.lastDay) - new Date()) / (1000 * 60 * 60 * 24)));
+        setDaysRemaining3(Math.floor((new Date(state.user.pokeGoals.pokegoal3?.lastDay) - new Date()) / (1000 * 60 * 60 * 24)));
       setLoading(false);
+      
     })
+
+
+
   },[]);
   useEffect( ()=> {
     console.log("user", state.user);
     console.log("this pokemon", pokegoal);
     console.log("it will update in 2 sec");
-
+    if(myPokegoal){
     fetch(`/delete-pokegoal/${pokegoal}/${pokeId}`, {
       method: "POST",
       headers: {
@@ -64,12 +85,12 @@ const PokeHome = () => {
     })
     setVisibleModal(true);
     setTimeout(() => {
-      if(visibleModal){
-          setVisibleModal(false);
-          window.location.reload();
-          navigate(`/user/${nick}/${pokeId}`);}
-    }, 3500);
-
+      if(!visibleModal){
+          // setVisibleModal(false);
+          // window.location.reload();
+          navigate(`/${nick}/${pokeId}`);}
+    }, 3000);
+  }
   },[pokegoal]);
  
   return (<>{ loading ? 
@@ -83,14 +104,15 @@ const PokeHome = () => {
         </Loader> 
       </ALoadingdiv>
     : <>
-      {pokegoal && <ModalContainer visible={visibleModal}>
+      {pokegoal && 
+        <ModalContainer visible={visibleModal}>
         <ModalContent>
-        <ModalImage src={wpokeball} alt="whitepokeball" />
+          <ModalImage src={wpokeball} alt="whitepokeball" />
           <CloseButton onClick={() => setVisibleModal(false)}>X</CloseButton>
           <h3>You just discard {pokegoal} </h3>
           <p>Changes have been made, now it is in the old pokegoals</p>
-          </ModalContent>
-      </ModalContainer>}
+        </ModalContent>
+        </ModalContainer>}
       <Pokediv>
         {/* This is the content when loading is false. */}
         <MyPokeUl>
@@ -110,8 +132,40 @@ const PokeHome = () => {
                   <h3 style={{"margin": "10px 0"}}>{state.user.pokeGoals.pokegoal1?.checkDays} < FaCheck style={{"font-size": "12px"}} /> / {state.user.pokeGoals.pokegoal1?.daysInterval} days <FaTicketAlt style={{"font-size": "15px"}} />
                   </h3>
                   <p>Pokegoal1: {state.user.pokeGoals.pokegoal1?.dailyTask}</p>
-                </div>
 
+                  {(state.user.pokeGoals.pokegoal1?.daysInterval && state.user.pokeGoals.pokegoal1?.lastDay) && <p> {state.user.pokeGoals.pokegoal1?.daysInterval - daysRemaining1} days passed -  {daysRemaining1} days left</p>}
+                
+                </div>
+                <div style={{"margin" : "10px 15px 0px"}}>
+                {(!loading && state.user?.pokeGoals) ?
+                <PieChart width={120} height={100}>
+                <Pie
+                  data={createChartData(daysRemaining1, state.user.pokeGoals.pokegoal1?.daysInterval)}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={44}
+                  fill="#8884d8"
+                  label
+                  labelLine={false}
+                >
+                  {createChartData(daysRemaining1, state.user.pokeGoals.pokegoal1?.daysInterval).map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                  ))}
+                </Pie>
+          <text x="79%" y="47%" textAnchor="middle" fontSize={13} fill="#ffffff">
+            {createChartData(daysRemaining1, state.user.pokeGoals.pokegoal1?.daysInterval)[0].value}
+          </text>          
+          <text x="80%" y="63%" textAnchor="middle" fontSize={13} 
+          fill="#ffffff"
+          // fill={theme.colors.pokered} 
+          >
+          {createChartData(daysRemaining1, state.user.pokeGoals.pokegoal1?.daysInterval)[1].value}
+          </text>
+              </PieChart>: <div></div>}
+
+                </div>
             </PokeDiv>
           :  <>
                 <img style={{"height": "100px"}} src={pokeball}    alt="pokeball"/>
@@ -136,7 +190,40 @@ const PokeHome = () => {
                 <h3 style={{"margin": "10px 0"}}>{state.user.pokeGoals.pokegoal2?.checkDays} < FaCheck style={{"font-size": "12px"}} /> / {state.user.pokeGoals.pokegoal2?.daysInterval} days <FaTicketAlt style={{"font-size": "15px"}} />
                 </h3>
                 <p>Pokegoal2: {state.user.pokeGoals.pokegoal2?.dailyTask}</p>
+
+                {(state.user.pokeGoals.pokegoal2?.daysInterval && state.user.pokeGoals.pokegoal2?.lastDay) && <p> {state.user.pokeGoals.pokegoal2?.daysInterval - daysRemaining2} days passed -  {daysRemaining2} days left</p>}
+
               </div>
+              <div style={{"margin" : "10px 15px 0px"}}>
+                {(!loading && state.user?.pokeGoals) ?
+                <PieChart width={120} height={100}>
+                <Pie
+                  data={createChartData(daysRemaining2, state.user.pokeGoals.pokegoal2?.daysInterval)}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={44}
+                  fill="#8884d8"
+                  label
+                  labelLine={false}
+                >
+                  {createChartData(daysRemaining2, state.user.pokeGoals.pokegoal2?.daysInterval).map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                  ))}
+                </Pie>
+          <text x="79%" y="47%" textAnchor="middle" fontSize={13} fill="#ffffff">
+            {createChartData(daysRemaining2, state.user.pokeGoals.pokegoal2?.daysInterval)[0].value}
+          </text>          
+          <text x="80%" y="63%" textAnchor="middle" fontSize={13} 
+          fill="#ffffff"
+          // fill={theme.colors.pokered} 
+          >
+          {createChartData(daysRemaining2, state.user.pokeGoals.pokegoal2?.daysInterval)[1].value}
+          </text>
+              </PieChart>: <div></div>}
+
+                </div>
           </PokeDiv>
           :  <>
                 <img style={{"height": "100px"}} src={pokeball}    alt="pokeball"/>
@@ -146,7 +233,8 @@ const PokeHome = () => {
         </li>
 
         <li>
-        {state.user.pokeGoals.pokegoal3?.daysInterval && <DeleteButton   >
+        {state.user.pokeGoals.pokegoal3?.daysInterval && <DeleteButton onClick={() => {setPokegoal("pokegoal3");
+                       setMyPokegoal(state.user.pokeGoals.pokegoal3)}}  >
                     <FaTrash />
         </DeleteButton> }
         <Alink  to={`/${state.user.pokeId}/${state.user.pokeGoals.pokegoal3.pokemon}/${Object.keys(state.user.pokeGoals)[2]}`}>
@@ -159,7 +247,39 @@ const PokeHome = () => {
                 <h3 style={{"margin": "10px 0"}}>{state.user.pokeGoals.pokegoal3?.checkDays} < FaCheck style={{"font-size": "12px"}} /> / {state.user.pokeGoals.pokegoal3?.daysInterval} days <FaTicketAlt style={{"font-size": "15px"}} />
                 </h3>
                 <p>Pokegoal3: {state.user.pokeGoals.pokegoal3?.dailyTask}</p>
+
+                {(state.user.pokeGoals.pokegoal3?.daysInterval && state.user.pokeGoals.pokegoal3?.lastDay) && <p> {state.user.pokeGoals.pokegoal3?.daysInterval - daysRemaining3} days passed - {daysRemaining3} days left</p>}
               </div>
+              <div style={{"margin" : "10px 15px 0px"}}>
+                {(!loading && state.user?.pokeGoals) ?
+                <PieChart width={120} height={100}>
+                <Pie
+                  data={createChartData(daysRemaining3, state.user.pokeGoals.pokegoal3?.daysInterval)}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={44}
+                  fill="#8884d8"
+                  label
+                  labelLine={false}
+                >
+                  {createChartData(daysRemaining3, state.user.pokeGoals.pokegoal3?.daysInterval).map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                  ))}
+                </Pie>
+          <text x="79%" y="47%" textAnchor="middle" fontSize={13} fill="#ffffff">
+            {createChartData(daysRemaining3, state.user.pokeGoals.pokegoal3?.daysInterval)[0].value}
+          </text>          
+          <text x="80%" y="63%" textAnchor="middle" fontSize={13} 
+          fill="#ffffff"
+          // fill={theme.colors.pokered} 
+          >
+          {createChartData(daysRemaining3, state.user.pokeGoals.pokegoal3?.daysInterval)[1].value}
+          </text>
+              </PieChart>: <div></div>}
+
+                </div>
           </PokeDiv>
           :  <>
               <img style={{"height": "100px"}} src={pokeball}    alt="pokeball"/>
@@ -169,14 +289,14 @@ const PokeHome = () => {
         </li>
 
         {state.user.oldPokegoals &&
-          <OldGoalsButton onClick={() => setVisible(!visible)}>Take a look to the Old PokeGoals</OldGoalsButton>
+          <OldGoalsButton onClick={() => setVisible(!visible)}>{visible ?"Hide " : "Display "} the Old PokeGoals</OldGoalsButton>
           } 
           
         {visible && <>
  
         {/* { */}
          {Object.values(state.user.oldPokegoals).map(pokegoal => {
-          return <PokeDiv style={{"opacity": "60%"}}>
+          return <PokeDiv style={{"opacity": "60%"}} key={(pokegoal.pokemon+ pokegoal.pokelvl+pokegoal.firstState+pokegoal.goalValue+pokegoal.keyAmount)}>
                           <img style={{"height": "150px"}} src={pokegoal.pokeimg} alt="pokeball"/>
               <div  >
                 <h2 style={{"margin": "12px 0"}}>{pokegoal?.pokemon} <span style={{"font-size": "11px"}}>lv. {pokegoal?.checkDays} </span></h2>
@@ -205,7 +325,7 @@ const Ah1 = styled.h1`
 `
 const ALoadingdiv = styled.div`
   font-family: ${theme.pokeFontfamily5};
-  border: blue solid 1px;
+  // border: blue solid 1px;
   width: 75%;
 `
 const Pokediv = styled.div`
@@ -281,7 +401,7 @@ const Alink = styled(NavLink)`
   // color: #1da1f2;
   color: white;
   font-size: 16px;
-  margin: 0px 25px 0px 4px;
+  margin: 0px 4px;
   text-decoration: none;
   // background-color: white;
   border: 3px solid ${theme.colors.pokeyellow};

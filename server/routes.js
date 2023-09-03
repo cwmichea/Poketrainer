@@ -167,7 +167,8 @@ router.post(`/:pokeId/:pokemon/setgoaldets/:pokegoal`, async (req, res) => {
     // Check if a user with the same sub already exists
     const existingUser = await db.collection("users").findOne({ pokeId: pokeId });
     if (existingUser) {
-      let myPokeGoalUpdated = {...existingUser.pokeGoals[pokegoal], ...myGoalDets};
+      let myPokeGoalUpdated = {...existingUser.pokeGoals[pokegoal], ...myGoalDets, checkDays: 0,
+      myJourneyValues: { 0: (existingUser.pokeGoals[pokegoal]?.firstState || 0)}};
       console.log("myPokeGoalUpdated", myPokeGoalUpdated);
       // Update the existing user's data with the data from req.body
       const updateResult = await db.collection("users").updateOne(
@@ -234,14 +235,20 @@ router.post(`/:pokeId/:pokemon/setgoaldates/:pokegoal`, async (req, res) => {
 
 
 router.post(`/:pokeId/:pokemon/:pokegoal/setgoaldays/`, async (req, res) => {
-  // console.log("req.body", req.body);
-  // console.log("params", req.params);
-  const {daysObj, checkDays} = req.body;
-  const myGoalDays = daysObj;
+  console.log("req.body", req.body);
+  console.log("params", req.params);
+  const {daysObj, checkDays, inputValues} = req.body;
+  let myGoalDays = daysObj;
+  let inputValues2 = {...inputValues};
+  let myCheckDays = checkDays;
+console.log("--------------------------");
+console.log("myJourneyValues", inputValues);
+console.log("myJourneyValues2", inputValues2);
   let { pokegoal, pokeId, pokemon } = req.params;
   pokeId = Number(pokeId);
-  console.log("checkdays", checkDays);
-  console.log("daysObj", daysObj);
+  // console.log("checkdays", checkDays);
+  // console.log("daysObj", daysObj);
+  // console.log("pokegoal", pokegoal);
   const client = new MongoClient(MONGO_URI, options);
   try {
     await client.connect();
@@ -249,10 +256,45 @@ router.post(`/:pokeId/:pokemon/:pokegoal/setgoaldays/`, async (req, res) => {
     // Check if a user with the same sub already exists
     const existingUser = await db.collection("users").findOne({ pokeId: pokeId });
     if (existingUser) {
+      let notes = {1:"", 2:"", 
+                   3:"", 4:"",
+                   5:"", 6:"",
+                   7:""}
+      const myPerformance = Number(checkDays/existingUser.pokeGoals[pokegoal].daysInterval);
+
+      // if (existingUser.pokeGoals[pokegoal]) {
+        inputValues2 = { ...existingUser.pokeGoals[pokegoal].myJourneyValues, ...inputValues};
+        console.log("++++++++++++++++new inputvalues updated", inputValues2);
+        console.log("================update old pokemon", pokemon );
+
+      // }
+      // if(existingUser.pokeGoals[pokegoal]?.checkDays == 0){
+      if(
+        // !existingUser.pokeGoals[pokegoal]?.checkDays || 
+        existingUser.pokeGoals[pokegoal]?.checkDays == 0
+        ){
+        inputValues2 = { 0: (existingUser.pokeGoals[pokegoal]?.firstState || 0)};
+        let myDaysObj = Object.keys(daysObj)
+        myGoalDays = {};
+        myDaysObj.forEach((key) => {
+          myGoalDays[key] = false;
+        });
+        // myCheckDays = 0;
+        if (checkDays > 0) {
+          myCheckDays = checkDays;
+          myGoalDays =  daysObj;
+        }
+        console.log("------------------inputvalue2", inputValues2  );
+        console.log("---------------new pokemon", pokemon );
+      }
+      console.log("------------------checkdays,mygoaldays", checkDays, myGoalDays );
       let myPokeGoalUpdated = {...existingUser.pokeGoals[pokegoal], 
                               myJourney: {...myGoalDays},
-                              checkDays};
-      console.log("myPokeGoalUpdated", myPokeGoalUpdated);
+                              myJourneyValues:{...inputValues2},
+                              checkDays: myCheckDays,
+                              notes,
+                              myPerformance};
+  // console.log("myPokeGoalUpdated", myPokeGoalUpdated);
       // Update the existing user's data with the data from req.body
       const updateResult = await db.collection("users").updateOne(
         { pokeId: pokeId },
@@ -319,7 +361,6 @@ router.post(`/delete-pokegoal/:pokegoal/:pokeId`, async (req, res) => {
               } } 
       );
       // console.log("existing user:", existingUser);
-
       // if (updateResult.matchedCount > 0) {
         return res.status(200).json({ status: 200, data: existingUser, pokegoalUpdated: myPokeGoalUpdated });
       // }

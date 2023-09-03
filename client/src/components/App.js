@@ -12,7 +12,8 @@ import { PokeContext } from "./PokeContext";
 import PokeSteps from "./PokeSteps";
 import PokeCheck from "./PokeCheck";
 import PokeTrack from "./PokeTrack";
-
+import PokeStats from "./PokeStats";
+import 'chart.js';
 function App() {
   const {   state } = useContext(PokeContext);
 
@@ -29,6 +30,7 @@ function App() {
           <Route path="/:pokeId/:pokemon/:pokegoal" element={<PokeSteps />} />
           <Route path="/:pokeId/:pokemon/:pokegoal/check" element={<PokeCheck />} />
           <Route path="/:pokeId/:pokemon/:pokegoal/track" element={<PokeTrack />} />
+          <Route path="/:nick/:pokeId" element={<PokeStats />} />
           {/* <Route path="/error" element={<PokError />} /> */}
         </Routes>
         {/* <PokeFooter/> */}

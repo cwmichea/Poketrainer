@@ -135,8 +135,11 @@ const Wrapper = styled.div`
   background-color: ${theme.colors.pokeblue};
   // background-color: ${theme.colors.pokered};
   font-size: 20px;
-  border: 1px solid ${theme.colors.pokered};
+  // border: 1px solid ${theme.colors.pokered};
   text-align: center;
+  border-radius: 7px;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  
 `;
 const Abutton = styled.button`
   background-color: ${theme.colors.pokeyellow};
