@@ -73,18 +73,13 @@ const ALoadingdiv = styled.div`
 const Pokediv = styled.div`
   display: flex;
   flex-direction: column;
-//   min-width: 250;
   width: 77%;
   margin:  0px 0px 0px 10px;
   border-radius: 15px;
   // width: 250px;
   justify-content: start;
   align-items: center;
-//   border: 1px solid ${theme.colors.pokeblue};
-//   background-color: ${theme.colors.secondary};
   background-color: ${theme.colors.pokeblue};
-//   background-color: white;
-//   height: 98%;
   height: 525px;
   // text-align: center;
   // flex-direction: column;
